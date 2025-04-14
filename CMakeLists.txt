@@ -152,6 +152,8 @@ set(JPEGXL_ENABLE_JPEGLI ${ENABLE_JPEGLI_DEFAULT} CACHE BOOL
     "Build jpegli library.")
 set(JPEGXL_ENABLE_JPEGLI_LIBJPEG true CACHE BOOL
     "Build libjpeg.so shared library based on jpegli.")
+set(JPEGXL_ENABLE_JPEGLI_LIBJPEG_ONLY_OBJ false CACHE BOOL
+    "Build libjpeg compatible library based on jpegli, but only as an object.")
 set(JPEGXL_INSTALL_JPEGLI_LIBJPEG false CACHE BOOL
     "Install jpegli version of libjpeg.so system-wide.")
 set(JPEGLI_LIBJPEG_LIBRARY_VERSION "62.3.0" CACHE STRING
@@ -325,7 +327,8 @@ if(JPEGXL_STATIC)
     link_libraries(-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic)
   elseif(CMAKE_USE_PTHREADS_INIT)
     # "whole-archive" is not supported on OSX.
-    if (NOT APPLE)
+    # on Android pthreads included in bionic
+    if (NOT APPLE AND NOT ANDROID)
       # Set pthreads as a whole-archive, otherwise weak symbols in the static
       # libraries will discard pthreads symbols leading to segmentation fault at
       # runtime.
